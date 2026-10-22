@@ -1,31 +1,19 @@
-include(${CMAKE_CURRENT_LIST_DIR}/Sources.cmake)
+# User-owned build customisation, kept outside CubeMX-generated CMake.
+include(${CMAKE_CURRENT_LIST_DIR}/UserSources.cmake)
 
-add_executable(${PROJECT_NAME}
-    ${CORE_SOURCES}
+target_sources(${PROJECT_NAME} PRIVATE
     ${APPLICATION_SOURCES}
+    ${UI_SOURCES}
     ${BSP_SOURCES}
     ${COMPONENT_SOURCES}
-    ${HAL_SOURCES}
-    ${FREERTOS_SOURCES}
-    platform/stm32f407/startup_stm32f407xx.s
+    ${COMPAT_SOURCES}
 )
 
-#-------------------------------------------------------------------------------
-# Include paths
-#-------------------------------------------------------------------------------
 target_include_directories(${PROJECT_NAME} PRIVATE
-    platform/stm32f407/include
-    third_party/stm32_hal/Inc
-    third_party/stm32_hal/Inc/Legacy
-    third_party/cmsis/Device/ST/STM32F4xx/Include
-    third_party/cmsis/Include
-    third_party/freertos/Source/include
-    third_party/freertos/Source/CMSIS_RTOS
-    third_party/freertos/Source/portable/GCC/ARM_CM4F
     src/application
     src/bsp/boards
     src/components/algorithm
-    third_party/cmsis/DSP/Include
+    Drivers/CMSIS/DSP/Include
     src/components/controller
     src/components/devices
     src/components/UI
@@ -34,7 +22,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 #-------------------------------------------------------------------------------
 # Compiler / linker options
 #-------------------------------------------------------------------------------
-target_compile_definitions(${PROJECT_NAME} PRIVATE
+target_compile_definitions(stm32cubemx INTERFACE
     USE_HAL_DRIVER
     STM32F407xx
     __FPU_PRESENT=1U
@@ -44,7 +32,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     ARM_MATH_ROUNDING
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE
+target_compile_options(stm32cubemx INTERFACE
     -mcpu=cortex-m4
     -mthumb
     -mfpu=fpv4-sp-d16
@@ -60,7 +48,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 )
 
 target_link_options(${PROJECT_NAME} PRIVATE
-    -T${CMAKE_CURRENT_SOURCE_DIR}/platform/stm32f407/STM32F407IGHX_FLASH.ld
+    -T${CMAKE_CURRENT_SOURCE_DIR}/STM32F407XX_FLASH.ld
     -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.map
     -Wl,--gc-sections
     -Wl,--print-memory-usage
@@ -70,8 +58,9 @@ target_link_options(${PROJECT_NAME} PRIVATE
 
 # AHRS.lib is an ARM Compiler (Keil) archive. GNU ld can link its AAPCS
 # objects directly; arm_cortexM4lf_math.lib is replaced by
-# platform/stm32f407/src/cmsis_dsp_compat.c.
-target_link_libraries(${PROJECT_NAME} PRIVATE
+# src/bsp/compat/cmsis_dsp_compat.c.
+target_link_libraries(${PROJECT_NAME}
+    stm32cubemx
     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/algorithm/AHRS.lib"
     m
 )

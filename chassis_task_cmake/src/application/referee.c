@@ -168,12 +168,15 @@ void referee_data_solve(uint8_t *frame)
     }
 }
 
-void get_chassis_power_and_buffer(fp32 *buffer)
+void get_chassis_buffer(float *buffer)
 {
     *buffer = power_heat_data_t.chassis_power_buffer;
 }
 
-
+void get_chassis_power_limit(uint16_t * power_limit)
+{
+    *power_limit = robot_state.chassis_power_limit;
+}
 uint8_t get_robot_id(void)
 {
     return robot_state.robot_id;
@@ -201,14 +204,3 @@ void get_remaining_bullet_num(uint16_t *remaining_num)
 {
     *remaining_num = bullet_remaining_t.bullet_remaining_num;
 }
-
-
-
-
-
-
-
-
-
-
-

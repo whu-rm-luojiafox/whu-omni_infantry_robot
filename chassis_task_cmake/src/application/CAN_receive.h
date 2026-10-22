@@ -3,8 +3,8 @@
   * @file       can_receive.c/h
   * @brief      there is CAN interrupt function  to receive motor data,
   *             and CAN send function to send motor current to control motor.
-  *             ������CAN�жϽ��պ��������յ������,CAN���ͺ������͵���������Ƶ��.
-  * @note       
+  *             这里是CAN中断接收函数，接收电机数据,CAN发送函数发送电机电流控制电机.
+  * @note
   * @history
   *  Version    Date            Author          Modification
   *  V1.0.0     Dec-26-2018     RM              1. done
@@ -44,14 +44,16 @@ typedef enum
   CAN_gmbial_chassis_data2 = 0x02,
   CAN_gmbial_chassis_data3 = 0x03,
   CAN_gmbial_chassis_data4 = 0x04,
+  CAN_gimbal_chassis_data5 = 0x06,      //  新增
   CAN_chassis_gimbal_ID = 0x123,
   CAN_referee_data = 0x05,
 
   CAN_LK_MOTOR_M1_ID = 0x141,
-  /* ��������ID */
+  /* 超级电容ID */
   CAN_SUPER_CAP_ID = 0x211,
-  /* ������������ID */
+  /* 超级电容设置ID */
   CAN_SUPER_CAP_SET_ID = 0x210,
+  CAN_SuperPower_ID = 0x52,
 
 } can_msg_id_e;
 
@@ -93,48 +95,73 @@ typedef enum
 
 typedef enum
 {
-    SHOOT_STOP = 0,   
-    SHOOT_READY_FRIC,  
+    SHOOT_STOP = 0,
+    SHOOT_READY_FRIC,
     SHOOT_READY_BULLET,
 
 
     SHOOT_SINGLE,
     SHOOT_CONTINUE,
-    SHOOT_READY,       
-    SHOOT_BULLET,      
+    SHOOT_READY,
+    SHOOT_BULLET,
     SHOOT_CONTINUE_BULLET,
-    SHOOT_DONE,     
-    SHOOT_BACK,       
+    SHOOT_DONE,
+    SHOOT_BACK,
 } shoot_mode_e;
 
 typedef struct
 {
-	float vx_set;//����x�᷽���趨���ٶȿ�������
-	float vy_set;//����y�᷽���趨���ٶȿ�����
-	float wz_set;//��������ʱ �趨���ٶȿ�������
-	float yaw_angle;//yaw��ʵʱ�Ƕ�
-	float yaw_angle_set;//����yaw��Ƕ�
-	float yaw_gyro;//yaw����ٶ�
-	RC_chassis_mode_e chassis_mode;//����ģʽ
-	shoot_mode_e shoot_mode_rc;//���յ������ģʽ
+	float vx_set;//底盘x轴方向设定的速度控制量；
+	float vy_set;//底盘y轴方向设定的速度控制量
+	float wz_set;//底盘自旋时 设定的速度控制量；
+	float yaw_angle;//yaw轴实时角度
+	float yaw_angle_set;//设置yaw轴角度
+	float yaw_gyro;//yaw轴角速度
+  float yaw_vel;   // 新增
+  float yaw_acc;   // 新增
+	RC_chassis_mode_e chassis_mode;//底盘模式
+	shoot_mode_e shoot_mode_rc;//接收到的射击模式
   uint16_t shoot_mode_receive;
-}chassis_data_t;	
+}chassis_data_t;
 
 
+typedef struct
+{
+    uint8_t statusCode;
+    float chassisPower;
+    float refereePower;
+    uint16_t chassisPowerLimit;
+    uint8_t capEnergy;
+    uint32_t updateTick;
+} __attribute__((packed))super_power_receive_t;
+typedef struct{
+    uint8_t enableDCDC: 1;
+    uint8_t systemRestart: 1;
+    uint8_t resv0: 3;
+    uint8_t clearError: 1;
+    uint8_t enableActiveChargingLimit: 1;
+    uint8_t useNewFeedbackMessage: 1;
+
+    uint16_t refereePowerLimit;
+    uint16_t refereeEnergyBuffer;
+    uint8_t activeChargingLimitRatio;
+    int16_t resv2;
+} __attribute__((packed)) super_power_t ; //
+_Static_assert(sizeof(super_power_t) == 8, "Invalid super capacitor control frame size");
 /**
   * @brief          send control current of motor (0x205, 0x206, 0x207, 0x208)
-  * @param[in]      yaw: (0x205) 6020 motor control current, range [-30000,30000] 
+  * @param[in]      yaw: (0x205) 6020 motor control current, range [-30000,30000]
   * @param[in]      pitch: (0x206) 6020 motor control current, range [-30000,30000]
   * @param[in]      shoot: (0x207) 2006 motor control current, range [-10000,10000]
   * @param[in]      rev: (0x208) reserve motor control current
   * @retval         none
   */
 /**
-  * @brief          ���͵�����Ƶ���(0x205,0x206,0x207,0x208)
-  * @param[in]      yaw: (0x205) 6020������Ƶ���, ��Χ [-30000,30000]
-  * @param[in]      pitch: (0x206) 6020������Ƶ���, ��Χ [-30000,30000]
-  * @param[in]      shoot: (0x207) 2006������Ƶ���, ��Χ [-10000,10000]
-  * @param[in]      rev: (0x208) ������������Ƶ���
+  * @brief          发送电机控制电流(0x205,0x206,0x207,0x208)
+  * @param[in]      yaw: (0x205) 6020电机控制电流, 范围 [-30000,30000]
+  * @param[in]      pitch: (0x206) 6020电机控制电流, 范围 [-30000,30000]
+  * @param[in]      shoot: (0x207) 2006电机控制电流, 范围 [-10000,10000]
+  * @param[in]      rev: (0x208) 保留，电机控制电流
   * @retval         none
   */
 extern void CAN_cmd_gimbal(int16_t yaw, int16_t pitch, int16_t shoot, int16_t rev);
@@ -145,7 +172,7 @@ extern void CAN_cmd_gimbal(int16_t yaw, int16_t pitch, int16_t shoot, int16_t re
   * @retval         none
   */
 /**
-  * @brief          ����IDΪ0x700��CAN��,��������3508��������������ID
+  * @brief          发送ID为0x700的CAN包,它会设置3508电机进入快速设置ID
   * @param[in]      none
   * @retval         none
   */
@@ -153,22 +180,22 @@ extern void CAN_cmd_chassis_reset_ID(void);
 
 /**
   * @brief          send control current of motor (0x201, 0x202, 0x203, 0x204)
-  * @param[in]      motor1: (0x201) 3508 motor control current, range [-16384,16384] 
-  * @param[in]      motor2: (0x202) 3508 motor control current, range [-16384,16384] 
-  * @param[in]      motor3: (0x203) 3508 motor control current, range [-16384,16384] 
-  * @param[in]      motor4: (0x204) 3508 motor control current, range [-16384,16384] 
+  * @param[in]      motor1: (0x201) 3508 motor control current, range [-16384,16384]
+  * @param[in]      motor2: (0x202) 3508 motor control current, range [-16384,16384]
+  * @param[in]      motor3: (0x203) 3508 motor control current, range [-16384,16384]
+  * @param[in]      motor4: (0x204) 3508 motor control current, range [-16384,16384]
   * @retval         none
   */
 /**
-  * @brief          ���͵�����Ƶ���(0x201,0x202,0x203,0x204)
-  * @param[in]      motor1: (0x201) 3508������Ƶ���, ��Χ [-16384,16384]
-  * @param[in]      motor2: (0x202) 3508������Ƶ���, ��Χ [-16384,16384]
-  * @param[in]      motor3: (0x203) 3508������Ƶ���, ��Χ [-16384,16384]
-  * @param[in]      motor4: (0x204) 3508������Ƶ���, ��Χ [-16384,16384]
+  * @brief          发送电机控制电流(0x201,0x202,0x203,0x204)
+  * @param[in]      motor1: (0x201) 3508电机控制电流, 范围 [-16384,16384]
+  * @param[in]      motor2: (0x202) 3508电机控制电流, 范围 [-16384,16384]
+  * @param[in]      motor3: (0x203) 3508电机控制电流, 范围 [-16384,16384]
+  * @param[in]      motor4: (0x204) 3508电机控制电流, 范围 [-16384,16384]
   * @retval         none
   */
 extern void CAN_cmd_chassis(int16_t motor1, int16_t motor2, int16_t motor3, int16_t motor4);
-extern void CAN_cmd_referee_data(uint8_t bullet_freq, float bullet_speed);
+extern void CAN_cmd_referee_data(uint8_t bullet_freq, float bullet_speed, uint16_t chassis_buffer_send);
 extern void CAN_INIT_STATUS(uint8_t status);
 extern void CAN_LK_START_control(void);
 extern void CAN_LK_CLOSE_control(void);
@@ -181,6 +208,12 @@ extern void CAN_LK_CLEAR_ERROR_control(void);
 
 
 extern void CAN_Send_Setpower(uint16_t setPower);
+extern void CAN_SuperPower_Control(super_power_t super_power_data);
+extern void CAN_tx_queue_init(void);
+extern void CAN_tx_task(void const *pvParameters);
+extern uint32_t CAN_get_tx_drop_count(void);
+extern uint8_t CAN_super_power_is_online(void);
+extern void CAN_get_super_power_data(super_power_receive_t *data);
 
 extern uint8_t reset_flag;
 
@@ -194,9 +227,9 @@ extern uint8_t reset_flag;
   * @retval         motor data point
   */
 /**
-  * @brief          ����yaw 6020�������ָ��
+  * @brief          返回yaw 6020电机数据指针
   * @param[in]      none
-  * @retval         �������ָ��
+  * @retval         电机数据指针
   */
 extern const motor_measure_t *get_yaw_gimbal_motor_measure_point(void);
 extern const lkmotor_measure_t *get_yaw_gimbal_lkmotor_measure_point(void);
@@ -207,9 +240,9 @@ extern const lkmotor_measure_t *get_yaw_gimbal_lkmotor_measure_point(void);
   * @retval         motor data point
   */
 /**
-  * @brief          ����pitch 6020�������ָ��
+  * @brief          返回pitch 6020电机数据指针
   * @param[in]      none
-  * @retval         �������ָ��
+  * @retval         电机数据指针
   */
 extern const motor_measure_t *get_pitch_gimbal_motor_measure_point(void);
 
@@ -219,9 +252,9 @@ extern const motor_measure_t *get_pitch_gimbal_motor_measure_point(void);
   * @retval         motor data point
   */
 /**
-  * @brief          ���ز������ 2006�������ָ��
+  * @brief          返回拨弹电机 2006电机数据指针
   * @param[in]      none
-  * @retval         �������ָ��
+  * @retval         电机数据指针
   */
 extern const motor_measure_t *get_trigger_motor_measure_point(void);
 
@@ -231,9 +264,9 @@ extern const motor_measure_t *get_trigger_motor_measure_point(void);
   * @retval         motor data point
   */
 /**
-  * @brief          ���ص��̵�� 3508�������ָ��
-  * @param[in]      i: ������,��Χ[0,3]
-  * @retval         �������ָ��
+  * @brief          返回底盘电机 3508电机数据指针
+  * @param[in]      i: 电机编号,范围[0,3]
+  * @retval         电机数据指针
   */
 extern const motor_measure_t *get_chassis_motor_measure_point(uint8_t i);
 extern chassis_data_t *get_Chassisdata_point(void);

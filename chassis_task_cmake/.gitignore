@@ -2,3 +2,8 @@ build/
 .vscode/
 *.user
 *.uvguix.*
+MXTmpFiles/
+*.ioc.bak
+*.c_save
+*.h_save
+*.cmake_save

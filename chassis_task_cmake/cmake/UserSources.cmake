@@ -1,22 +1,4 @@
-# Sources for this independent firmware project. Paths are relative to the project root.
-set(CORE_SOURCES
-    platform/stm32f407/src/main.c
-    platform/stm32f407/src/freertos.c
-    platform/stm32f407/src/adc.c
-    platform/stm32f407/src/can.c
-    platform/stm32f407/src/dma.c
-    platform/stm32f407/src/gpio.c
-    platform/stm32f407/src/i2c.c
-    platform/stm32f407/src/rtc.c
-    platform/stm32f407/src/spi.c
-    platform/stm32f407/src/tim.c
-    platform/stm32f407/src/usart.c
-    platform/stm32f407/src/stm32f4xx_hal_msp.c
-    platform/stm32f407/src/stm32f4xx_it.c
-    platform/stm32f407/src/system_stm32f4xx.c
-    platform/stm32f407/src/cmsis_dsp_compat.c
-)
-
+# User-owned business sources. CubeMX does not manage this file.
 set(APPLICATION_SOURCES
     src/application/CAN_receive.c
     src/application/Can_task.c
@@ -71,19 +53,4 @@ set(COMPONENT_SOURCES
     src/components/UI/ui_side.c
 )
 
-file(GLOB HAL_SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/stm32_hal/Src/*.c")
-
-set(FREERTOS_SOURCES
-    third_party/freertos/Source/croutine.c
-    third_party/freertos/Source/event_groups.c
-    third_party/freertos/Source/list.c
-    third_party/freertos/Source/queue.c
-    third_party/freertos/Source/stream_buffer.c
-    third_party/freertos/Source/tasks.c
-    third_party/freertos/Source/timers.c
-    third_party/freertos/Source/portable/MemMang/heap_4.c
-    third_party/freertos/Source/portable/GCC/ARM_CM4F/port.c
-    third_party/freertos/Source/CMSIS_RTOS/cmsis_os.c
-)
-
+set(COMPAT_SOURCES src/bsp/compat/cmsis_dsp_compat.c)
