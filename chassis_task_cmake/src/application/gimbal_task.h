@@ -118,6 +118,6 @@ typedef struct
 extern gimbal_control_t gimbal_control;
 
 
-void gimbal_task(void);
+void gimbal_task(const void *argument);
 //extern float data[2];
 #endif
