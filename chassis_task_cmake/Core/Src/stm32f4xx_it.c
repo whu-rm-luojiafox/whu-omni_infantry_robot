@@ -25,6 +25,9 @@
 #include "task.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "FreeRTOS.h"
+#include "task.h"
+extern void xPortSysTickHandler(void);
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

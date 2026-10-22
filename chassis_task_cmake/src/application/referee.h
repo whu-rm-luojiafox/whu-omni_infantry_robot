@@ -105,8 +105,8 @@ typedef struct __attribute__((packed)) //0x0202
     uint16_t reserved1;
     float reserved2;
     uint16_t chassis_power_buffer;
-    uint16_t shooter_heat0;     //17mm·¢Éä»úµÄÉä»÷ÈÈÁ¿
-    uint16_t shooter_heat1;     //42mm·¢Éä»ú¹¹µÄÉä»÷ÈÈÁ¿
+    uint16_t shooter_heat0;     //17mmå‘å°„æœºçš„å°„å‡»çƒ­é‡
+    uint16_t shooter_heat1;     //42mmå‘å°„æœºæ„çš„å°„å‡»çƒ­é‡
 } ext_power_heat_data_t;
 
 typedef struct __attribute__((packed)) //0x0203
@@ -144,7 +144,7 @@ typedef struct __attribute__((packed)) //0x0207
 
 typedef struct __attribute__((packed))
 {
-    uint16_t bullet_remaining_num;  // »úÆ÷ÈË×ÔÉíÓµÓĞµÄ17mmµ¯ÍèÔÊĞí·¢µ¯Á¿ 
+    uint16_t bullet_remaining_num;  // æœºå™¨äººè‡ªèº«æ‹¥æœ‰çš„17mmå¼¹ä¸¸å…è®¸å‘å¼¹é‡
     uint16_t no_use;
     uint16_t remaining_money;
     uint16_t bullet_remaining_num_get;
@@ -177,8 +177,8 @@ typedef struct __attribute__((packed))
 {
     uint8_t data[32];
 } ext_download_stream_data_t;
-/****************************ºì·½»úÆ÷ÈËID********************/
-#define UI_Data_RobotID_RHero 1         
+/****************************çº¢æ–¹æœºå™¨äººID********************/
+#define UI_Data_RobotID_RHero 1
 #define UI_Data_RobotID_REngineer 2
 #define UI_Data_RobotID_RStandard1 3
 #define UI_Data_RobotID_RStandard2 4
@@ -186,7 +186,7 @@ typedef struct __attribute__((packed))
 #define UI_Data_RobotID_RAerial 6
 #define UI_Data_RobotID_RSentry 7
 #define UI_Data_RobotID_RRadar 9
-/****************************À¶·½»úÆ÷ÈËID********************/
+/****************************è“æ–¹æœºå™¨äººID********************/
 #define UI_Data_RobotID_BHero 101
 #define UI_Data_RobotID_BEngineer 102
 #define UI_Data_RobotID_BStandard1 103
@@ -200,7 +200,8 @@ typedef struct __attribute__((packed))
 extern void init_referee_struct_data(void);
 extern void referee_data_solve(uint8_t *frame);
 
-extern void get_chassis_power_and_buffer(fp32 *buffer);
+extern void get_chassis_buffer(float *buffer);
+extern void get_chassis_power_limit(uint16_t * power_limit);
 
 extern uint8_t get_robot_id(void);
 

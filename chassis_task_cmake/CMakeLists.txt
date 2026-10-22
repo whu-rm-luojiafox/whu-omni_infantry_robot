@@ -19,4 +19,6 @@ project(chassis_task C ASM)
 
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 
+add_executable(${PROJECT_NAME})
+add_subdirectory(cmake/stm32cubemx)
 include(cmake/Firmware.cmake)

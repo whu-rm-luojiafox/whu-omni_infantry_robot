@@ -19,7 +19,7 @@
 #define POS_ESP_GIMBAL_AIM_YAW (0.001f)
 #define U_MAX_GIMBAL_AIM_YAW (15000)
 
-//PITCH��SMC����
+//PITCH轴SMC参数
 #define J_GIMBAL_PITCH (4.0f)
 #define K_GIMBAL_PITCH (200.0f)
 #define C1_GIMBAL_PITCH (30.0f)
@@ -35,7 +35,7 @@
 #define GIMBAL_CONTROL_TIME 2
 
 
-/*��̨yaw�����ǶȻ�PID���� */
+/*云台yaw轴电机角度环PID参数 */
 #define YAW_ANGLE_PID_KP 27.3f          //28.3
 #define YAW_ANGLE_PID_KI 0.002f           //0.01
 #define YAW_ANGLE_PID_KD 2.0f            //3.0
@@ -43,12 +43,12 @@
 #define YAW_ANGLE_PID_MAX_OUT 1500.0f      // 3
 #define YAW_ANGLE_PID_MAX_IOUT 400.0f      // 0.5
 
-/*��̨yaw�����ٶȻ�PID���� */
+/*云台yaw轴电机速度环PID参数 */
 #define YAW_SPEED_PID_KP 0.60f                //0.41f
 #define YAW_SPEED_PID_KI 0.00f              //0.001
 #define YAW_SPEED_PID_KD 0.7f                 //0.8
-#define YAW_SPEED_PID_MAX_OUT 1500.0f      
-#define YAW_SPEED_PID_MAX_IOUT 100.0f      
+#define YAW_SPEED_PID_MAX_OUT 1500.0f
+#define YAW_SPEED_PID_MAX_IOUT 100.0f
 
 
 
@@ -60,10 +60,10 @@ typedef struct
 
 typedef enum
 {
-    GIMBAL_MOTOR_OFF = 0, // ���ԭʼֵ����
-    GIMBAL_MOTOR_GYRO,    // ��������ǽǶȿ���
+    GIMBAL_MOTOR_OFF = 0, // 电机原始值控制
+    GIMBAL_MOTOR_GYRO,    // 电机陀螺仪角度控制
     GIMBAL_MOTOR_ROTATE,
-    GIMBAL_MOTOR_INIT,   
+    GIMBAL_MOTOR_INIT,
 } gimbal_motor_mode_e;
 typedef struct
 {

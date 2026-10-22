@@ -35,9 +35,10 @@
 #include "gimbal_task.h"
 #include "referee_usart_task.h"
 #include "Can_task.h"
+#include "CAN_receive.h"
 #include "voltage_task.h"
 #include "oled_task.h"
-#include "set_power_task.h"
+/* Legacy set-power task is disabled. */
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,9 +52,10 @@ osThreadId led_RGB_flow_handle;
 osThreadId gimbalTaskHandle;
 osThreadId referee_usart_task_handle;
 osThreadId can_task_handle;
+osThreadId can_tx_task_handle;
 osThreadId battery_voltage_handle;
 osThreadId oled_handle;
-osThreadId setpower_handle;
+/* No legacy 0x210 task handle. */
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -136,7 +138,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
+  CAN_tx_queue_init();
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -167,6 +169,9 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(REFEREE, referee_usart_task, osPriorityNormal, 0, 128);
   referee_usart_task_handle = osThreadCreate(osThread(REFEREE), NULL);
 
+  osThreadDef(CAN_TX_TASK, CAN_tx_task, osPriorityHigh, 0, 256);
+  can_tx_task_handle = osThreadCreate(osThread(CAN_TX_TASK), NULL);
+
   osThreadDef(CAN_TASK, Can_task, osPriorityNormal, 0, 128);
   can_task_handle = osThreadCreate(osThread(CAN_TASK), NULL);
 
@@ -176,8 +181,7 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(OLED, oled_task, osPriorityNormal, 0, 256);
   oled_handle = osThreadCreate(osThread(OLED), NULL);
 
-  osThreadDef(SETPOWER,send_setpower_task,osPriorityNormal,0,128);
-  setpower_handle = osThreadCreate(osThread(SETPOWER), NULL);
+  /* Super capacitor control now uses 0x61 in Can_task; stop legacy 0x210. */
   /* USER CODE END RTOS_THREADS */
 
 }
