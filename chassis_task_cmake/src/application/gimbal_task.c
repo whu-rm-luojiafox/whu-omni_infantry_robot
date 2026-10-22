@@ -233,8 +233,9 @@ void gimbal_control_loop(gimbal_control_t *gimbal_control)
 		}
 	}
 }
-void gimbal_task()
+void gimbal_task(const void *argument)
 {
+    (void)argument;
 	gimbal_Init(&gimbal_control);
 	shoot_init();
 	while(1)

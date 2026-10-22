@@ -1,0 +1,89 @@
+# Sources for this independent firmware project. Paths are relative to the project root.
+set(CORE_SOURCES
+    platform/stm32f407/src/main.c
+    platform/stm32f407/src/freertos.c
+    platform/stm32f407/src/adc.c
+    platform/stm32f407/src/can.c
+    platform/stm32f407/src/dma.c
+    platform/stm32f407/src/gpio.c
+    platform/stm32f407/src/i2c.c
+    platform/stm32f407/src/rtc.c
+    platform/stm32f407/src/spi.c
+    platform/stm32f407/src/tim.c
+    platform/stm32f407/src/usart.c
+    platform/stm32f407/src/stm32f4xx_hal_msp.c
+    platform/stm32f407/src/stm32f4xx_it.c
+    platform/stm32f407/src/system_stm32f4xx.c
+    platform/stm32f407/src/cmsis_dsp_compat.c
+)
+
+set(APPLICATION_SOURCES
+    src/application/CAN_receive.c
+    src/application/Can_task.c
+    src/application/Chassis_power_control.c
+    src/application/INS_task.c
+    src/application/calibrate_task.c
+    src/application/chassis_behaviour.c
+    src/application/chassis_task.c
+    src/application/detect_task.c
+    src/application/gimbal_task.c
+    src/application/led_flow_task.c
+    src/application/oled_task.c
+    src/application/referee.c
+    src/application/referee_usart_task.c
+    src/application/remote_control.c
+    src/application/set_power_task.c
+    src/application/shoot.c
+    src/application/test_task.c
+    src/application/vofa.c
+    src/application/voltage_task.c
+)
+
+set(BSP_SOURCES
+    src/bsp/boards/bsp_adc.c
+    src/bsp/boards/bsp_buzzer.c
+    src/bsp/boards/bsp_can.c
+    src/bsp/boards/bsp_delay.c
+    src/bsp/boards/bsp_flash.c
+    src/bsp/boards/bsp_i2c.c
+    src/bsp/boards/bsp_imu_pwm.c
+    src/bsp/boards/bsp_led.c
+    src/bsp/boards/bsp_rc.c
+    src/bsp/boards/bsp_spi.c
+    src/bsp/boards/bsp_usart.c
+)
+
+set(COMPONENT_SOURCES
+    src/components/algorithm/AHRS_middleware.c
+    src/components/algorithm/CRC8_CRC16.c
+    src/components/algorithm/fifo.c
+    src/components/algorithm/user_lib.c
+    src/components/controller/pid.c
+    src/components/controller/smc.c
+    src/components/devices/BMI088Middleware.c
+    src/components/devices/BMI088driver.c
+    src/components/devices/OLED.c
+    src/components/devices/ist8310driver.c
+    src/components/devices/ist8310driver_middleware.c
+    src/components/UI/ui_default.c
+    src/components/UI/ui_interface.c
+    src/components/UI/ui_middle.c
+    src/components/UI/ui_side.c
+)
+
+file(GLOB HAL_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/stm32_hal/Src/*.c")
+
+set(FREERTOS_SOURCES
+    third_party/freertos/Source/croutine.c
+    third_party/freertos/Source/event_groups.c
+    third_party/freertos/Source/list.c
+    third_party/freertos/Source/queue.c
+    third_party/freertos/Source/stream_buffer.c
+    third_party/freertos/Source/tasks.c
+    third_party/freertos/Source/timers.c
+    third_party/freertos/Source/portable/MemMang/heap_4.c
+    third_party/freertos/Source/portable/GCC/ARM_CM4F/port.c
+    third_party/freertos/Source/CMSIS_RTOS/cmsis_os.c
+)
+
