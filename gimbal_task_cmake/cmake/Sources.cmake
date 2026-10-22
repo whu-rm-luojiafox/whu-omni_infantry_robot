@@ -1,0 +1,114 @@
+# Sources for this independent firmware project. Paths are relative to the project root.
+set(CORE_SOURCES
+    platform/stm32f407/src/main.c
+    platform/stm32f407/src/freertos.c
+    platform/stm32f407/src/adc.c
+    platform/stm32f407/src/can.c
+    platform/stm32f407/src/crc.c
+    platform/stm32f407/src/dma.c
+    platform/stm32f407/src/gpio.c
+    platform/stm32f407/src/i2c.c
+    platform/stm32f407/src/rng.c
+    platform/stm32f407/src/rtc.c
+    platform/stm32f407/src/spi.c
+    platform/stm32f407/src/tim.c
+    platform/stm32f407/src/usart.c
+    platform/stm32f407/src/usb_device.c
+    platform/stm32f407/src/usbd_cdc_if.c
+    platform/stm32f407/src/usbd_conf.c
+    platform/stm32f407/src/usbd_desc.c
+    platform/stm32f407/src/stm32f4xx_hal_msp.c
+    platform/stm32f407/src/stm32f4xx_it.c
+    platform/stm32f407/src/system_stm32f4xx.c
+    platform/stm32f407/src/cmsis_dsp_compat.c
+)
+
+set(APPLICATION_SOURCES
+    src/application/CAN_receive.c
+    src/application/CAN_task.c
+    src/application/INS_task.c
+    src/application/Self_aim.c
+    src/application/calibrate_task.c
+    src/application/detect_task.c
+    src/application/gimbal_task.c
+    src/application/led_flow_task.c
+    src/application/my_uart.c
+    src/application/referee.c
+    src/application/referee_usart_task.c
+    src/application/remote_control.c
+    src/application/servo_task.c
+    src/application/shoot.c
+    src/application/test_task.c
+    src/application/vofa.c
+)
+
+set(UI_SOURCES
+    src/components/ui/RM_Cilent_UI.c
+)
+
+set(BSP_SOURCES
+    src/bsp/boards/bsp_PWM.c
+    src/bsp/boards/bsp_buzzer.c
+    src/bsp/boards/bsp_can.c
+    src/bsp/boards/bsp_crc32.c
+    src/bsp/boards/bsp_delay.c
+    src/bsp/boards/bsp_dwt.c
+    src/bsp/boards/bsp_flash.c
+    src/bsp/boards/bsp_fric.c
+    src/bsp/boards/bsp_i2c.c
+    src/bsp/boards/bsp_imu_pwm.c
+    src/bsp/boards/bsp_laser.c
+    src/bsp/boards/bsp_led.c
+    src/bsp/boards/bsp_rc.c
+    src/bsp/boards/bsp_rng.c
+    src/bsp/boards/bsp_servo_pwm.c
+    src/bsp/boards/bsp_spi.c
+    src/bsp/boards/bsp_usart.c
+)
+
+set(COMPONENT_SOURCES
+    src/components/algorithm/AHRS_middleware.c
+    third_party/cmsis/DSP/Source/MatrixFunctions/arm_mat_add_f32.c
+    third_party/cmsis/DSP/Source/MatrixFunctions/arm_mat_init_f32.c
+    third_party/cmsis/DSP/Source/MatrixFunctions/arm_mat_inverse_f32.c
+    third_party/cmsis/DSP/Source/MatrixFunctions/arm_mat_mult_f32.c
+    third_party/cmsis/DSP/Source/MatrixFunctions/arm_mat_sub_f32.c
+    third_party/cmsis/DSP/Source/MatrixFunctions/arm_mat_trans_f32.c
+    src/components/algorithm/user_lib.c
+    src/components/controller/pid.c
+    src/components/controller/smc.c
+    src/components/devices/BMI088Middleware.c
+    src/components/devices/BMI088driver.c
+    src/components/devices/QuaternionEKF.c
+    src/components/devices/controller.c
+    src/components/devices/ist8310driver.c
+    src/components/devices/ist8310driver_middleware.c
+    src/components/devices/kalman_filter.c
+    src/components/support/CRC8_CRC16.c
+    src/components/support/fifo.c
+    src/components/support/mem_mang4.c
+)
+
+file(GLOB HAL_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/stm32_hal/Src/*.c")
+
+set(FREERTOS_SOURCES
+    third_party/freertos/Source/croutine.c
+    third_party/freertos/Source/event_groups.c
+    third_party/freertos/Source/list.c
+    third_party/freertos/Source/queue.c
+    third_party/freertos/Source/stream_buffer.c
+    third_party/freertos/Source/tasks.c
+    third_party/freertos/Source/timers.c
+    third_party/freertos/Source/portable/MemMang/heap_4.c
+    third_party/freertos/Source/portable/GCC/ARM_CM4F/port.c
+    third_party/freertos/Source/CMSIS_RTOS/cmsis_os.c
+)
+
+set(USB_SOURCES
+    third_party/stm32_usb_device/Core/Src/usbd_core.c
+    third_party/stm32_usb_device/Core/Src/usbd_ctlreq.c
+    third_party/stm32_usb_device/Core/Src/usbd_ioreq.c
+    third_party/stm32_usb_device/Class/CDC/Src/usbd_cdc.c
+)
+
